@@ -1,78 +1,143 @@
 const gql = require('graphql-tag')
 
 module.exports = gql`
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    concentration: String
+    gender: String
+    bio: String
+    picture: String!
+    house: String
+    birthday: String
+    friends: [Friends]
+    createdAt: String!
+    updatedAt: String
+    posts: [Post]
+    hobbies: [Hobbies]
+  }
+
+  enum HobbyNames {
+    SPORTS
+    ARTS
+    MUSIC
+    READING
+    TRAVEL
+    DINING
+    CODING
+  }
+  type Post {
+    id: ID!
+    userId: ID!
+    content: String!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Friends {
+    id: ID!
+    followerId: ID!
+    followingID: ID!
+  }
+
+  type Hobbies {
+    id: ID!
+    userID: ID!
+    name: HobbyNames!
+    createdAt: String!
+    updatedAt: String!
+  }
+  input HobbyInputs {
+    hobbies: String
+  }
   type Query {
-    user(id: ID!): User!
     users(
       substr: String
       hometown: String
       house: String
       concentration: String
-    ): [User!]
+      hobbies: [HobbyInputs]
+    ): [User]
+    user(id: Int!): User!
     post(id: ID!): Post!
-    posts: [Post!]
+    posts: [Post!]!
+    hobbies: [Hobbies!]!
   }
 
   type Mutation {
-    createUser(input: CreateUserInput!): LoginReturn!
-    createPost(content: String!): CreatePostReturn!
-    editPost(id: ID!, newContent: String!): EditPostReturn!
-    loginUser(email: String!, password: String!): LoginReturn!
+    createUser(input: CreateUser!): CreateUserReturn!
+    # updateUser(input: UpdateUser!): updateUserReturn!
+    createPost(input: CreatePost!): CreatePostReturn!
+    editPost(id: ID!, input: UpdatePost!): UpdatePostReturn!
+    #  acceptFriend(id: ID!, input: AcceptFriend): acceptFriendReturn!
+    # createUser(input: createUser!): User!
+    loginUser(input: LoginUser!): LoginUserReturn!
   }
 
-  type CreatePostReturn {
-    post: Post
-    error: Error
+  input CreatePost {
+    content: String!
+    createdAt: String!
+    updatedAt: String!
   }
-
-  type EditPostReturn {
-    post: Post
-    error: Error
-  }
-
-  input CreateUserInput {
+  input UpdateUser {
+    id: ID!
     name: String!
     email: String!
     password: String!
-    birthday: String
     concentration: String
-    hometown: String
-    house: String
     gender: String
     bio: String
-    picture: String
-    hobbies: [HobbyInput!]
+    birthday: String
+    #friends: [Friends]
+    picture: String!
+    createdAt: String!
+    updatedAt: String
+    house: String
+    #posts: [Post]!
+    hobbies: String
   }
 
-  input HobbyInput {
-    hobby: String!
+  input CreateUser {
+    content: String!
+    createdAt: String!
+    updatedAt: String!
   }
 
-  type User {
-    id: ID!
+  type UpdateUserReturn {
+    error: String
+    user: User
+  }
+  input LoginUser {
     name: String!
     email: String!
-    birthday: String
-    concentration: String
-    hometown: String
-    house: String
-    gender: String
-    bio: String
-    picture: String
   }
 
-  type Post {
-    id: ID!
-    content: String!
-  }
-
-  type LoginReturn {
+  type CreateUserReturn {
+    error: String
     user: User
-    token: String
-    error: Error
   }
 
-  type Error {
-    message: String
+  type UpdatePostReturn {
+    error: String
+    user: User
+  }
+  input UpdatePost {
+    id: ID!
+    userId: ID!
+    content: String!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type CreatePostReturn {
+    error: String
+    post: Post
+  }
+
+  type LoginUserReturn {
+    error: String
+    user: User
   }
 `

@@ -41,6 +41,12 @@ const editPost = async (obj, args, context) => {
       },
     }
   }
+
+  const postUpdated = await Post.query()
+    .patch({ content: args.newContent })
+    .where({ id: args.id })
+
+  return postUpdated
   // TODO - finish this function which edits a post given its id and new content.
 }
 
